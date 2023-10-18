@@ -7,9 +7,6 @@ import requests
 import pandas as pd
 import os
 import duckdb
-import seaborn as sns
-import matplotlib.pyplot as plt
-import pytz
 from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
@@ -144,11 +141,9 @@ if __name__ == "__main__":
     # Define current working directory
     current_dir = os.getcwd()
 
-    # Get parent directory
-    parent_directory = os.path.dirname(current_dir)
-
     # Define directory to store DuckDB database
-    database_directory = os.path.join(parent_directory, "data")
+    database_directory = os.path.join(current_dir, "src", "data")
+    print(database_directory)
 
     # Call save_to_duckdb function
     init_duckdb(df, table_name, database_directory)
