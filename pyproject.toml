@@ -2,7 +2,7 @@
 name = "ETL/ML - Air Quality"
 version = "0.1.0"
 description = "ETL pipeline with Ploomber"
-authors = ["Alejandro Leiva - aj.leivar@gmail.com", "Oscar Beltrán"]
+authors = ["Alejandro Leiva - aj.leivar@gmail.com", "Oscar Beltrán - ozbeltran@gmail.com"]
 license = "Apache 2.0"
 readme = "README.md"
 
