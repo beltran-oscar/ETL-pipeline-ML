@@ -5,21 +5,27 @@ on:
     - cron: '0 2 * * *' 
 
 jobs:
-  build:
+  fetch-and-push:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+        python-version: "3.10"
+
+    - name: Install Poetry using pip
       run: |
-        python -m pip install --upgrade pip
-        pip install pylint
-    - name: Analysing the code with pylint
+        python -m pip install poetry
+
+    - name: Install dependencies using Poetry
       run: |
+        poetry install
+
+    - name: Run Ploomber pipeline to fetch and push data to Redshift
+      env:
+        motherduck_token: ${{ secrets.REDSHIFT_USER }}
+      run: |
+        #ploomber build
         
