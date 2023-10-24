@@ -2,7 +2,7 @@ name: Pylint
 
 on:
   schedule:
-    - cron: '0 2 * * *' 
+    - cron: '* * * * *' 
 
 jobs:
   fetch-and-push:
