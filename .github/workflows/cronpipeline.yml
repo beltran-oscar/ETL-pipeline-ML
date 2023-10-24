@@ -25,7 +25,7 @@ jobs:
 
     - name: Run Ploomber pipeline to fetch and push data to Redshift
       env:
-        motherduck_token: ${{ secrets.REDSHIFT_USER }}
+        MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
       run: |
         #ploomber build
         
