@@ -1,60 +1,45 @@
-# Hacktoberfest 2023 project: building ETL and RAG pipelines with open source 
 
-## Set up /  Configuración
 
-There should be one GitHub repository per team. /  Debería haber un repositorio de GitHub por equipo.
+# AirQ-Forecaster: An ETL-to-ML Pipeline for Predicting Air Quality Index
+### Hacktoberfest 2023 - Ploomber Mentorship Program
+ 
 
-**Ensure all team members have completed all steps in the [set up](setup.md) document.**
+## Description
 
-**Asegúrate de que todos los miembros del equipo hayan completado todos los pasos en el [documento de configuración](setup-espanol.md).**
+This project focuses on creating an ETL (Extract, Transform, Load) pipeline with Ploomberfor air quality data. The pipeline fetches and processes air quality measurements from the OpenAQ API and uses DuckDB and MotherDuckDB for data storage and management.
 
-## Theme of your project / Tema de tu proyecto
+We implemented the **ARIMA** (AutoRegressive Integrated Moving Average) model for time series forecasting to predict the Air Quality Index. ARIMA is a powerful and widely-used statistical method effective for short-term forecasting with data having seasonality, or cyclic patterns.
 
-1. Extract Transform Load (ETL) pipeline with an analytics component / Pipeline de Extracción, Transformación y Carga (ETL) con un componente analítico
-2. Extract Transform Load (ETL) pipeline with a machine learning (ML) component  / Pipeline de Extracción, Transformación y Carga (ETL) con un componente de aprendizaje automático (ML)
-3. Retrieval Augmented Generation (RAG) pipeline for question answering /  Pipeline de Generación Aumentada por Recuperación (RAG) para responder preguntas
-4. Retrieval Augmented Generation (RAG) pipeline for chatbot /  Pipeline de Generación Aumentada por Recuperación (RAG) para chatbot
+Key Features of ARIMA:
 
-## Description / Descripción 
+- **AutoRegressive (AR):** Leverages the relationship between an observation and a number of lagged observations (autoregression).
 
-Provide a description of your project. Include the data sources you are using, the tools you are using, and the expected outcome of your project.
+- **Integrated (I):** Involves differencing the time series to make it stationary, i.e., to stabilize the mean of the time series by removing changes in the level.
 
-Proporcione una descripción de su proyecto. Incluya las fuentes de datos que está utilizando, las herramientas que está utilizando y el resultado esperado de su proyecto.
+- **Moving Average (MA):** Models the error term as a linear combination of error terms at various times in the past.
 
-## Data sources / Fuentes de datos
+## Data sources
 
-Provide a detailed description of your data sources. Please ensure you work only with open source data. Include a link to the data you are working with. 
+OpenAQ: API designed for aggregating and sharing open air quality data from around the world.
 
-Agregue una descripción detallada de sus fuentes de datos. Asegúrese de trabajar solo con datos de código abierto. Incluya un enlace a los datos con los que está trabajando.
-
-**Do not upload data to GitHub** / **No suba datos a GitHub**
+We used an air quality sensor with location ID 380422 (49.208733, -122.9118), located in the city of New Westminster in British Columbia, Canada.
 
 ## Methods / Métodos
 
-Describe the methods you are using. Include a description of the tools you are using.
+**Include Process Flow Diagram Here (Pending)**
 
-Describa los métodos que está utilizando. Incluya una descripción de las herramientas que está utilizando.
+## User interface 
 
-## User interface your project will have / Interfaz de usuario que tendrá su proyecto
+**Flask app Dashboard (PENDING)**
 
-Describe the user interface your project will have. Include a description of the tools you are using.
+## Authors
 
-Options: 
+Alejandro Leiva - [aleivaar94](https://github.com/aleivaar94)
 
-1. FastAPI application
-2. Chainlit application
-3. Voila dashboard
+Oscar Beltrán - [beltran-oscar](https://github.com/beltran-oscar)
 
-Describa la interfaz de usuario que tendrá su proyecto. Incluya una descripción de las herramientas que está utilizando.
+## Acknowledgments
 
-Opciones:
+We want to thank the [Ploomber](https://ploomber.io/) Team for their time and dedicated mentorship during the development of this project. Special mention to [Laura Funderburk](https://github.com/lfunderburk) - Developer Advocate at Ploomber, for her commitment and dedication to guide all mentees.
 
-1. Aplicación FastAPI
-2. Aplicación Chainlit
-3. Tablero Voila
-
-## Team members/ Miembros del equipo
-
-Add the names and GitHub IDs of your team members here.
-
-Agregue los nombres y las ID de GitHub de los miembros de su equipo aquí.
+We also like to specially thank [Eduardo Blancas](https://github.com/edublancas) - Co-founder/CEO at Ploomber for this mentorship opportunity.
