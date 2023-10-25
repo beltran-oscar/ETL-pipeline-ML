@@ -1,4 +1,6 @@
 
+![Ploomber Logo](https://github.com/beltran-oscar/ETL-pipeline-ML/blob/main/images/ploomber-logo.png)
+
 
 # AirQ-Forecaster: An ETL-to-ML Pipeline for Predicting Air Quality Index
 ### Hacktoberfest 2023 - Ploomber Mentorship Program
@@ -59,3 +61,5 @@ We want to thank the [Ploomber](https://ploomber.io/) Team for their time and de
 
 We also want to thank [Eduardo Blancas](https://github.com/edublancas) - Co-founder/CEO at Ploomber for this mentorship opportunity.
 
+## License
+The project is licensed under the Apache 2.0 License.
