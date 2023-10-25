@@ -23,9 +23,10 @@ jobs:
       run: |
         poetry install
 
-    - name: Run Ploomber pipeline to fetch and push data to Redshift
+    - name: Run Ploomber pipeline to fetch and push data to MotherDuck
       env:
         MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
+        API_KEY: ${{ secrets.API_KEY }} 
       run: |
         #ploomber build
         
