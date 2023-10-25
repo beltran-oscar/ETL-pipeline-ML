@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 # Setting pandas to display all columns and rows 
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
+# pd.set_option('display.max_rows', None)
+# pd.set_option('display.max_columns', None)
 
 # %%
 def extract(api_key):
@@ -52,13 +52,13 @@ def extract(api_key):
     params = {
         "location_id": "380422",
         "parameter": ["pressure", "temperature", "um003", "um025", "um010", "pm10", "um100", "pm1", "um005", "humidity", "um050", "pm25"],
-        "limit": 10000,
+        "limit": 9000,
         "api_key": api_key
     }
     
     try:
         # Make the GET request
-        response = requests.get(api_url, params=params)
+        response = requests.get(api_url, params=params, timeout=30)
         
         # Raise exception for HTTP errors
         response.raise_for_status()
@@ -125,15 +125,54 @@ def init_duckdb(df, table_name, database_directory):
     
     con.close()
 
+
+# %%
+def load_into_motherduck(md_token):
+    """
+    Load data from a local DuckDB instance to MotherDuck.
+
+    Parameters
+    ----------
+    md_token : str
+        The MotherDuck token.
+
+    Returns
+    -------
+    None
+    """
+
+    # Check if MotherDuck token is set
+    assert md_token and md_token.strip() != '', "MOTHERDUCK_TOKEN is not set or is empty."
+
+    # Initiate the MotherDuck connection with token
+    local_con = duckdb.connect(f'md:?motherduck_token={md_token}')
+
+    # Load MotherDuck extension
+    local_con.execute("LOAD motherduck")
+
+    # Load air_data.duckdb database into MotherDuck database named openaq_api
+    local_con.execute("CREATE OR REPLACE TABLE openaq_api.main.df as SELECT * FROM 'df'")
+
+# %%    
+load_dotenv('.env')
+api_key = os.getenv('API_KEY')
+print(api_key)
+
+# Get MotherDuck token
+md_token = os.getenv('MOTHERDUCK_TOKEN')
+print(md_token)
+
 # %%
 if __name__ == "__main__":
     # Load API key from .env file
     load_dotenv('.env')
     api_key = os.getenv('API_KEY')
+
+    # Get MotherDuck token
+    md_token = os.getenv('MOTHERDUCK_TOKEN')
     
     # Call extract function
     df = extract(api_key)
-    df.info()
 
     # Define table name
     table_name = "air_data"
@@ -143,7 +182,8 @@ if __name__ == "__main__":
 
     # Define directory to store DuckDB database
     database_directory = os.path.join(current_dir, "src", "data")
-    print(database_directory)
 
-    # Call save_to_duckdb function
+    # Call init_duckdb function
     init_duckdb(df, table_name, database_directory)
+
+    load_into_motherduck(md_token)
