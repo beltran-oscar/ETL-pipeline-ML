@@ -17,10 +17,6 @@ from pathlib import Path
 
 # %%
 
-load_dotenv('.env')
-api_key = os.getenv('API_KEY')
-print(api_key)
-
 def extract(api_key):
     """
     Fetch and process air quality measurements from the OpenAQ API.
@@ -124,22 +120,23 @@ def init_duckdb(df, table_name, database_directory):
     None
 
     """
-    duckdb_directory = os.path.join(database_directory, "air_data.duckdb")
-    con = duckdb.connect(duckdb_directory)
-    con.register('df', df)
-    
-    # Check if table already exists, if not, create it
-    tables = con.execute("SHOW TABLES").fetchall()
-    if table_name not in [table[0] for table in tables]:
-        con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df")
-    
-    con.close()
+    try:
+        duckdb_directory = os.path.join(database_directory, "air_data.duckdb")
+        con = duckdb.connect(duckdb_directory)
+        # con.register('df', df)
+        
+        # Check if table already exists, if not, create it
+        tables = con.execute("SHOW TABLES").fetchall()
+        if table_name not in [table[0] for table in tables]:
+            con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df")
+        
+        con.close()
+    except Exception as e:
+        print(e)
+        print(type(df))
 
 
 # %%
-# Get MotherDuck token
-md_token = os.getenv('MOTHERDUCK_TOKEN')
-print(md_token)
 
 def load_into_motherduck(md_token):
     """
@@ -167,14 +164,7 @@ def load_into_motherduck(md_token):
     # Load air_data.duckdb database into MotherDuck database named openaq_api
     local_con.execute("CREATE OR REPLACE TABLE openaq_api.main.df as SELECT * FROM 'df'")
 
-# %%    
-load_dotenv('.env')
-api_key = os.getenv('API_KEY')
-print(api_key)
 
-# Get MotherDuck token
-md_token = os.getenv('MOTHERDUCK_TOKEN')
-print(md_token)
 
 # %%
 if __name__ == "__main__":
@@ -187,6 +177,7 @@ if __name__ == "__main__":
     
     # Call extract function
     df = extract(api_key)
+    print(type(df))
 
     # Define table name
     table_name = "air_data"
@@ -200,4 +191,5 @@ if __name__ == "__main__":
     # Call init_duckdb function
     init_duckdb(df, table_name, database_directory)
 
-    # load_into_motherduck(md_token)
+    # Call load_into_motherduck function
+    load_into_motherduck(md_token)
