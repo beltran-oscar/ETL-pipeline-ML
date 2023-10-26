@@ -16,6 +16,11 @@ from pathlib import Path
 # pd.set_option('display.max_columns', None)
 
 # %%
+
+load_dotenv('.env')
+api_key = os.getenv('API_KEY')
+print(api_key)
+
 def extract(api_key):
     """
     Fetch and process air quality measurements from the OpenAQ API.
@@ -92,7 +97,12 @@ def extract(api_key):
         print(e)
 
 # %%
+
+
 # Create local DuckDB instance
+# Define table name
+table_name = "air_data"
+
 def init_duckdb(df, table_name, database_directory):
     """
     Initiate a DuckDB instance to create a DuckDB database named "air_data.duckdb" inside the
@@ -127,6 +137,10 @@ def init_duckdb(df, table_name, database_directory):
 
 
 # %%
+# Get MotherDuck token
+md_token = os.getenv('MOTHERDUCK_TOKEN')
+print(md_token)
+
 def load_into_motherduck(md_token):
     """
     Load data from a local DuckDB instance to MotherDuck.
@@ -186,4 +200,4 @@ if __name__ == "__main__":
     # Call init_duckdb function
     init_duckdb(df, table_name, database_directory)
 
-    load_into_motherduck(md_token)
+    # load_into_motherduck(md_token)
