@@ -2,7 +2,7 @@ name: Pylint
 
 on:
   schedule:
-    - cron: '* * * * *' 
+    - cron: '*/2 * * * *' # Run every 2 minutes
 
 jobs:
   fetch-and-push:
@@ -28,5 +28,5 @@ jobs:
         MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
         API_KEY: ${{ secrets.API_KEY }} 
       run: |
-        #ploomber build
+        ploomber build
         
