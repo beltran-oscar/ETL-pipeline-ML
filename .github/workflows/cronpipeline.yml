@@ -28,5 +28,4 @@ jobs:
         MOTHERDUCK_TOKEN: ${{ secrets.MOTHERDUCK_TOKEN }}
         API_KEY: ${{ secrets.API_KEY }} 
       run: |
-        # ploomber build
-        
+        ploomber build
