@@ -11,15 +11,12 @@ from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 
-# Setting pandas to display all columns and rows 
-# pd.set_option('display.max_rows', None)
-# pd.set_option('display.max_columns', None)
+
 
 # %%
 
-load_dotenv('.env')
+# Load API key from .env file
 api_key = os.getenv('API_KEY')
-print(api_key)
 
 def extract(api_key):
     """
@@ -32,22 +29,8 @@ def extract(api_key):
 
     Returns
     -------
-    df : pandas.DataFrame
-        Dataframe containing the fetched measurements.
-        
-    Raises
-    ------
-    requests.exceptions.HTTPError
-        For HTTP related errors.
-    requests.exceptions.ConnectionError
-        For connection related errors.
-    requests.exceptions.Timeout
-        For timeout errors.
-    requests.exceptions.RequestException
-        For all other request related errors.
-    Exception
-        If the fetched dataframe is empty.
-
+    df : pandas.DataFrame or None
+        Dataframe containing the fetched measurements, or None if no data is fetched.
     """
     
     # API URL
@@ -64,27 +47,24 @@ def extract(api_key):
     try:
         # Make the GET request
         response = requests.get(api_url, params=params, timeout=30)
+        response.raise_for_status()  # Raise exception for HTTP errors
         
-        # Raise exception for HTTP errors
-        response.raise_for_status()
-        
-        # Check if the request was successful
         if response.status_code == 200:
             data = response.json()
             output = pd.json_normalize(data['results'])
             df = pd.DataFrame(output)
             
-            # Check if dataframe is empty
             if df.empty:
-                raise Exception("Empty df, check API request")
-            
-            df['date.utc'] = pd.to_datetime(df['date.utc'], errors='coerce') # Convert to datetime
-            df['date.local'] = df['date.utc'].dt.tz_convert('America/Los_Angeles') # Covert to PST/PDT time zone
-            df['date.local'] = df['date.local'].dt.tz_localize(None) # Convert to timezone-naive
-            df = df[df['value'] > 0.0] # Filter values
+                print("Extracted dataframe is empty. No data to load.")
+                return None
+
+            df['date.utc'] = pd.to_datetime(df['date.utc'], errors='coerce')
+            df['date.local'] = df['date.utc'].dt.tz_convert('America/Los_Angeles')
+            df['date.local'] = df['date.local'].dt.tz_localize(None)
+            df = df[df['value'] > 0.0]
             
             return df
-        
+
     except requests.exceptions.HTTPError as errh:
         print("Http Error:", errh)
     except requests.exceptions.ConnectionError as errc:
@@ -93,8 +73,6 @@ def extract(api_key):
         print("Timeout Error:", errt)
     except requests.exceptions.RequestException as err:
         print("Error: Something Else", err)
-    except Exception as e:
-        print(e)
 
 # %%
 
@@ -124,57 +102,54 @@ def init_duckdb(df, table_name, database_directory):
     None
 
     """
-    duckdb_directory = os.path.join(database_directory, "air_data.duckdb")
-    con = duckdb.connect(duckdb_directory)
-    con.register('df', df)
-    
-    # Check if table already exists, if not, create it
-    tables = con.execute("SHOW TABLES").fetchall()
-    if table_name not in [table[0] for table in tables]:
-        con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df")
-    
-    con.close()
+    try:
+        duckdb_directory = os.path.join(database_directory, "air_data.duckdb")
+        con = duckdb.connect(duckdb_directory)
+        
+        # Check if table already exists, if not, create it
+        tables = con.execute("SHOW TABLES").fetchall()
+        if table_name not in [table[0] for table in tables]:
+            con.execute(f"CREATE TABLE {table_name} AS SELECT * FROM df")
+        
+        con.close()
+    except Exception as e:
+        print(e)
+        print(type(df))
 
 
 # %%
-# Get MotherDuck token
-md_token = os.getenv('MOTHERDUCK_TOKEN')
-print(md_token)
-
-def load_into_motherduck(md_token):
+def load_into_motherduck(df, md_token):
     """
-    Load data from a local DuckDB instance to MotherDuck.
+    Load data from a pandas DataFrame into MotherDuck.
 
     Parameters
     ----------
+    df : pandas.DataFrame or None
+        DataFrame to be loaded into MotherDuck. If None, nothing is loaded.
     md_token : str
         The MotherDuck token.
-
-    Returns
-    -------
-    None
     """
 
-    # Check if MotherDuck token is set
+    if df is None:
+        print("No data to load into MotherDuck.")
+        return
+    
+    # Assert that 'md_token' is neither None nor empty, else raise an AssertionError.
     assert md_token and md_token.strip() != '', "MOTHERDUCK_TOKEN is not set or is empty."
 
-    # Initiate the MotherDuck connection with token
-    local_con = duckdb.connect(f'md:?motherduck_token={md_token}')
+    # Connect to MotherDuck database
+    motherduck_con = duckdb.connect(f'md:?motherduck_token={md_token}')
+    
+    # Load the MotherDuck module.
+    motherduck_con.execute("LOAD motherduck")
+    
+    # Uploads pandas datafarme into  MotherDuck database.
+    motherduck_con.execute("CREATE OR REPLACE TABLE openaq_api.main.df as SELECT * FROM 'df'")
+    
+    # Close connection after dataframe is uploaded
+    motherduck_con.close()
 
-    # Load MotherDuck extension
-    local_con.execute("LOAD motherduck")
 
-    # Load air_data.duckdb database into MotherDuck database named openaq_api
-    local_con.execute("CREATE OR REPLACE TABLE openaq_api.main.df as SELECT * FROM 'df'")
-
-# %%    
-load_dotenv('.env')
-api_key = os.getenv('API_KEY')
-print(api_key)
-
-# Get MotherDuck token
-md_token = os.getenv('MOTHERDUCK_TOKEN')
-print(md_token)
 
 # %%
 if __name__ == "__main__":
@@ -187,6 +162,7 @@ if __name__ == "__main__":
     
     # Call extract function
     df = extract(api_key)
+    print(type(df))
 
     # Define table name
     table_name = "air_data"
@@ -200,4 +176,5 @@ if __name__ == "__main__":
     # Call init_duckdb function
     init_duckdb(df, table_name, database_directory)
 
-    # load_into_motherduck(md_token)
+    # Call load_into_motherduck function
+    load_into_motherduck(df, md_token)

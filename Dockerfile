@@ -21,11 +21,11 @@ COPY .env .env
 COPY . .
 
 # Extract data for app
-#RUN poetry run ploomber build
+## RUN poetry run ploomber build
 
 # Expose the port that the app runs on
 EXPOSE 8501
 
 # Execute the script when the container starts
 #CMD ["poetry", "run", "uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8000"]
-CMD ["streamlit", "run", "app_ploomber.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "app_ploomber.py", "--server.port=8000", "--server.address=0.0.0.0"]
