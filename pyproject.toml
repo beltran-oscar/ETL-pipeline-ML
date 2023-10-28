@@ -16,7 +16,7 @@ ipykernel = "^6.25.2"
 python-dotenv = "^1.0.0"
 ipywidgets = "^8.1.1"
 pandas = "2.0.3"
-streamlit = "1.27.2"
+streamlit = "^1.27.2"
 
 [tool.jupysql.SqlMagic]
 displaycon = false

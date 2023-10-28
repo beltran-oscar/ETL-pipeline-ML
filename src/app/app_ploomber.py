@@ -9,6 +9,15 @@ import duckdb
 import os
 from pathlib import Path
 
+# Get MotherDuck token
+#md_token = os.getenv('MOTHERDUCK_TOKEN')
+
+# Connect to MotherDuck database
+#motherduck_con = duckdb.connect(f'md:?motherduck_token={md_token}')
+
+# Query database and output into pandas dataframe
+#air_data_df = motherduck_con.sql("SELECT * FROM openaq_api.main.df").df()
+
 current_dir = os.getcwd()
 print(current_dir)
 
@@ -23,6 +32,8 @@ con = duckdb.connect(database_directory)
 result = con.execute("SELECT * FROM air_data;")
 
 df = result.fetch_df()
+
+#df = air_data_df
 df.head()
 
 con.close()
@@ -41,13 +52,18 @@ selected_tab = st.radio("Select Tab:", tabs)
 if selected_tab == "Make Predictions":
     st.header("Make AQI Predictions")
     
+    model_path = os.path.join(parent_directory, "notebooks", "ML", "arima_model.pkl")
+    
     # Load the saved ARIMA model
-    model_file = 'arima_model.pkl'
-    with open(model_file, 'rb') as file:
+    #model_file = 'arima_model.pkl'
+    with open(model_path, 'rb') as file:
         model = pickle.load(file)
     
     # Add user input for forecast date
     forecast_date = st.date_input("Select Forecast Date", datetime.date(2023, 10, 21))
+        
+    # Convert 'date.local' to object if needed
+    df['date.local'] = df['date.local'].astype(str)
         
     # Split the string by space to separate the date and time
     date_time_parts = df['date.local'][0].split(' ')
@@ -65,7 +81,7 @@ if selected_tab == "Make Predictions":
     # Calculate the number of forecast periods from the current date to the forecast date
     forecast_periods = (forecast_date - current_date).days
     
-    if forecast_periods < 0:
+    if forecast_periods <= 0:
         st.write('The specified date is in the measured data (no prediction necessary)')
     else:
         # Use your ARIMA model to make a forecast for the given date
