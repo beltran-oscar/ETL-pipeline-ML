@@ -18,6 +18,7 @@ RUN poetry install
 RUN pip install streamlit
 RUN pip install matplotlib
 RUN pip install duckdb
+RUN pip install statsmodels
 
 # Copy the .env file
 #COPY .env /app/
