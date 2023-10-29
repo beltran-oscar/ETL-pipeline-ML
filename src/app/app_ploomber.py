@@ -18,25 +18,39 @@ from pathlib import Path
 # Query database and output into pandas dataframe
 #air_data_df = motherduck_con.sql("SELECT * FROM openaq_api.main.df").df()
 
-current_dir = os.getcwd()
-print(current_dir)
+#current_dir = os.getcwd()
+#print(current_dir)
+#parent_directory = os.path.dirname(current_dir)
+#print(parent_directory)
+#database_directory = os.path.join(parent_directory, "data", "air_data.duckdb")
+#print(database_directory)
+#con = duckdb.connect(database_directory)
+#result = con.execute("SELECT * FROM air_data;")
+#df = result.fetch_df()
 
-parent_directory = os.path.dirname(current_dir)
-print(parent_directory)
 
-database_directory = os.path.join(parent_directory, "data", "air_data.duckdb")
-print(database_directory)
 
-con = duckdb.connect(database_directory)
+from dotenv import load_dotenv
 
-result = con.execute("SELECT * FROM air_data;")
+# Load MotherDuck token
+load_dotenv('.env')
 
-df = result.fetch_df()
+# Get MotherDuck token
+md_token = os.getenv('MOTHERDUCK_TOKEN')
 
-#df = air_data_df
+# Connect to MotherDuck database
+motherduck_con = duckdb.connect(f'md:?motherduck_token={md_token}')
+
+# Query database and output into pandas dataframe
+air_data_df = motherduck_con.sql("SELECT * FROM openaq_api.main.df").df()
+
+
+
+
+df = air_data_df
 df.head()
 
-con.close()
+#con.close()
 
 # Create a Streamlit app title
 st.title("AirQ-Forecaster")
@@ -52,11 +66,11 @@ selected_tab = st.radio("Select Tab:", tabs)
 if selected_tab == "Make Predictions":
     st.header("Make AQI Predictions")
     
-    model_path = os.path.join(parent_directory, "notebooks", "ML", "arima_model.pkl")
+    #model_path = os.path.join(parent_directory, "notebooks", "ML", "arima_model.pkl")
     
     # Load the saved ARIMA model
-    #model_file = 'arima_model.pkl'
-    with open(model_path, 'rb') as file:
+    model_file = 'arima_model.pkl'
+    with open(model_file, 'rb') as file:
         model = pickle.load(file)
     
     # Add user input for forecast date
