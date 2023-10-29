@@ -16,6 +16,9 @@ ipykernel = "^6.25.2"
 python-dotenv = "^1.0.0"
 ipywidgets = "^8.1.1"
 pandas = "2.0.3"
+numpy = "^1.23.5"
+matplotlib = "^3.5.1"
+duckdb = "^0.9.1"
 streamlit = "^1.27.2"
 
 [tool.jupysql.SqlMagic]

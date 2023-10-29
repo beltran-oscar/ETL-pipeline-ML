@@ -14,8 +14,10 @@ RUN pip install poetry
 RUN poetry lock
 RUN poetry install
 
-# Install Streamlit
+# Install Streamlit, Matplotlib, DuckDB
 RUN pip install streamlit
+RUN pip install matplotlib
+RUN pip install duckdb
 
 # Copy the .env file
 #COPY .env /app/
@@ -24,6 +26,7 @@ RUN pip install streamlit
 COPY . .
 
 # Copy the application code from the subfolder
+COPY src/data/air_data.duckdb /app/
 COPY src/app/app_ploomber.py /app/
 
 # Extract data for app
