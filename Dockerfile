@@ -14,6 +14,9 @@ RUN pip install poetry
 RUN poetry lock
 RUN poetry install
 
+# Install Streamlit
+RUN pip install streamlit
+
 # Copy the .env file
 #COPY .env /app/
 
