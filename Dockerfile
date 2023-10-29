@@ -23,6 +23,9 @@ RUN pip install streamlit
 # Copy the rest of the application code
 COPY . .
 
+# Copy the application code from the subfolder
+COPY src/app/app_ploomber.py /app/
+
 # Extract data for app
 ## RUN poetry run ploomber build
 
