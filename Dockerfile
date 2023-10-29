@@ -26,8 +26,10 @@ RUN pip install duckdb
 COPY . .
 
 # Copy the application code from the subfolder
-COPY src/data/air_data.duckdb /app/
+#COPY src/data/air_data.duckdb /app/
 COPY src/app/app_ploomber.py /app/
+COPY src/app/arima_model.pkl /app/
+
 
 # Extract data for app
 ## RUN poetry run ploomber build
