@@ -61,6 +61,9 @@ See `pyproject.toml` for all package requirements. Dependencies are managed usin
 
 ## User Interface 
 
+The Streamlit App is deployed in [Ploomber Cloud](https://ploomber.io/cloud/). You can access the app [here](https://weathered-heart-8302.ploomberapp.io/) or by following this URL: https://weathered-heart-8302.ploomberapp.io/
+
+
 ![Streamlit App](https://github.com/beltran-oscar/ETL-pipeline-ML/blob/main/images/app-streamlit.gif)
 
 ## Authors
