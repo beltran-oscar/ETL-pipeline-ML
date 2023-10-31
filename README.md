@@ -22,32 +22,46 @@ Key Features of ARIMA:
 
 ## Data sources
 
-OpenAQ: API designed for aggregating and sharing open air quality data from around the world.
+**OpenAQ** - API designed for aggregating and sharing open air quality data from around the world.
 
 We used an air quality sensor with location ID 380422 (49.208733, -122.9118), located in the city of New Westminster in British Columbia, Canada.
 
+### Parameters
+
+- `pm1 - PM1` ➡️ Particulate matter less than 1 micrometer in diameter mass concentration, µg/m³
+- `pm10 - PM10` ➡️ Particulate matter less than 10 micrometers in diameter mass concentration, µg/m³
+- `pm25 - PM2.5` ➡️ Particulate matter less than 2.5 micrometers in diameter mass concentration, µg/m³
+- `um003 - PM0.3` ➡️ count, particles/cm³
+- `um005 - PM0.5` ➡️ count, particles/cm³
+- `um010 - PM1` ➡️ count, particles/cm³
+- `um025 - PM2.5` ➡️ count, particles/cm³
+- `um050 - PM5.0` ➡️ count, particles/cm³
+- `um100 - PM10` ➡️ count, particles/cm³
+- `pressure` ➡️ Atmospheric or barometric pressure, hPa
+- `temperature` ➡️ °C
+- `humidity` ➡️ %
+
 ## Methods
 
-**Include Process Flow Diagram Here (Pending)**
+![Flowchart](https://github.com/beltran-oscar/ETL-pipeline-ML/blob/main/images/flowchart.png)
 
-
-- **Docker Integration:** The project is containerized using Docker, allowing for easy setup and deployment. The Dockerfile provides the necessary instructions to build the Docker image.
+- **GitHub Actions**: The ETL process is automatically executed every hour.
 
 - **Ploomber Pipeline:** The ETL process is managed using Ploomber, a workflow management tool. The pipeline configuration can be found in `pipeline.yaml`.
 
-- **Data Extraction:** The data extraction process fetches air quality measurements from the OpenAQ API. The extraction logic is implemented in `extract_duckdb.py`.
-
-- **Data Storage with DuckDB and MotherDuck:** The extracted data is stored in a local DuckDB instance and in the cloud using MotherDuck. DuckDB is an in-memory analytical database that supports SQL queries.
+- **Data Extraction and Cloud Data Storage MotherDuck:** The data extraction process fetches air quality measurements from the OpenAQ API. The extraction logic is implemented in `extract_duckdb.py`. The extracted data is stored in the cloud using MotherDuck.
 
 - **Jupyter Notebooks:** The project includes Jupyter notebooks for data exploration and analysis (see `extract.ipynb`).
 
+- **Docker Integration:** The project is containerized using Docker, allowing for easy setup and deployment. The Dockerfile provides the necessary instructions to build the Docker image.
+
 ## Dependencies
 
-See `poetry.lock` for all package requirements
+See `pyproject.toml` for all package requirements. Dependencies are managed using `poetry`.
 
-## User interface 
+## User Interface 
 
-**Flask app Dashboard (PENDING)**
+![Streamlit App](https://github.com/beltran-oscar/ETL-pipeline-ML/blob/main/images/app-streamlit.gif)
 
 ## Authors
 
@@ -57,7 +71,7 @@ Oscar Beltrán - [beltran-oscar](https://github.com/beltran-oscar)
 
 ## Acknowledgments
 
-We want to thank the [Ploomber](https://ploomber.io/) Team for their time and dedicated mentorship during the development of this project. Special mention to [Laura Funderburk](https://github.com/lfunderburk) - Developer Advocate at Ploomber, for her commitment and dedication to guide all mentees.
+We want to thank the [Ploomber](https://ploomber.io/) Team for their time and dedicated mentorship during the development of this project. Special mention to [Laura Funderburk](https://github.com/lfunderburk) - Developer Advocate at Ploomber, for her patience and dedication to guide all mentees.
 
 We also want to thank [Eduardo Blancas](https://github.com/edublancas) - Co-founder/CEO at Ploomber for this mentorship opportunity.
 
