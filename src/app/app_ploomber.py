@@ -2,34 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-#import seaborn as sns
 import pickle  # Import the pickle module to load the ARIMA model
 import datetime
 import duckdb
 import os
 from pathlib import Path
-
-# Get MotherDuck token
-#md_token = os.getenv('MOTHERDUCK_TOKEN')
-
-# Connect to MotherDuck database
-#motherduck_con = duckdb.connect(f'md:?motherduck_token={md_token}')
-
-# Query database and output into pandas dataframe
-#air_data_df = motherduck_con.sql("SELECT * FROM openaq_api.main.df").df()
-
-#current_dir = os.getcwd()
-#print(current_dir)
-#parent_directory = os.path.dirname(current_dir)
-#print(parent_directory)
-#database_directory = os.path.join(parent_directory, "data", "air_data.duckdb")
-#print(database_directory)
-#con = duckdb.connect(database_directory)
-#result = con.execute("SELECT * FROM air_data;")
-#df = result.fetch_df()
-
-
-
 from dotenv import load_dotenv
 
 # Load MotherDuck token
@@ -42,15 +19,8 @@ md_token = os.getenv('MOTHERDUCK_TOKEN')
 motherduck_con = duckdb.connect(f'md:?motherduck_token={md_token}')
 
 # Query database and output into pandas dataframe
-air_data_df = motherduck_con.sql("SELECT * FROM openaq_api.main.df").df()
-
-
-
-
-df = air_data_df
+df = motherduck_con.sql("SELECT * FROM openaq_api.main.df").df()
 df.head()
-
-#con.close()
 
 # Create a Streamlit app title
 st.title("AirQ-Forecaster")
@@ -59,14 +29,9 @@ st.title("AirQ-Forecaster")
 tabs = ["Data Visualizations", "Make Predictions"]
 selected_tab = st.radio("Select Tab:", tabs)
 
-# Load dataset
-#df = pd.read_csv('EDA_ploomber.csv')
-
 # If "Make Predictions" tab is selected
 if selected_tab == "Make Predictions":
     st.header("Make AQI Predictions")
-    
-    #model_path = os.path.join(parent_directory, "notebooks", "ML", "arima_model.pkl")
     
     # Load the saved ARIMA model
     model_file = 'arima_model.pkl'
@@ -90,7 +55,6 @@ if selected_tab == "Make Predictions":
     month = int(date_parts[1])
     day = int(date_parts[2])
     current_date = datetime.date(year, month, day)
-    #current_date = datetime.date(2023, 10, 20)
     
     # Calculate the number of forecast periods from the current date to the forecast date
     forecast_periods = (forecast_date - current_date).days
@@ -102,7 +66,7 @@ if selected_tab == "Make Predictions":
         forecasted_values = model.forecast(steps=forecast_periods)
     
         # Take the last forecasted value, which corresponds to the specified date
-        forecasted_value = forecasted_values[-1]
+        forecasted_value = round(forecasted_values[-1],2)
     
         # AQI bucketing
         def get_AQI_bucket(x):
@@ -149,8 +113,8 @@ if selected_tab == "Data Visualizations":
     subset = df[df['parameter'] == selected_parameter]
     
     # Create a time series plot
-    st.subheader("Complete time serie")
-    fig = plt.figure()
+    st.subheader(f"Complete time series for {selected_parameter}")
+    fig = plt.figure(figsize=(20, 10))
     plt.plot(subset['date.local'], subset['value'])
     plt.xlabel("Time")
     plt.ylabel(selected_parameter)
@@ -159,15 +123,12 @@ if selected_tab == "Data Visualizations":
     # Daily mean
     df_mean = df.groupby(['parameter', df['date.local'].dt.date])['value'].mean().reset_index()
     
-    # Pivot table with columns for each variable
-    pivoted_df = df.pivot_table(index=df['date.local'], columns='parameter', values='value')
-    
     # Filter the dataFrame for the selected parameter
     subset = df_mean[df_mean['parameter'] == selected_parameter]
 
     # Create the plot
-    st.subheader("Time serie - Daily mean")
-    fig = plt.figure()
+    st.subheader(f"Time series - Daily means for {selected_parameter}")
+    fig = plt.figure(figsize=(20, 10))
     plt.plot(subset['date.local'], subset['value'], label=selected_parameter)
     plt.xlabel('Time')
     plt.ylabel(selected_parameter)
@@ -248,8 +209,8 @@ if selected_tab == "Data Visualizations":
     df_mean_day['date.local'] = pd.to_datetime(df_mean_day['date.local'])
 
     # Time series for AQI
-    st.subheader("Time serie for AQI")
-    fig = plt.figure()
+    st.subheader("Time series for AQI (Air Quality Index)")
+    fig = plt.figure(figsize=(20, 10))
     plt.plot(df_mean_day['date.local'], df_mean_day['AQI_calculated'])
     plt.xlabel('Time')
     plt.ylabel('AQI value')

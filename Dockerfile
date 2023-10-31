@@ -14,7 +14,7 @@ RUN pip install poetry
 RUN poetry lock
 RUN poetry install
 
-# Install Streamlit, Matplotlib, DuckDB
+# Install required packages
 RUN pip install streamlit
 RUN pip install matplotlib
 RUN pip install duckdb
@@ -28,17 +28,11 @@ COPY .env /app/
 COPY . .
 
 # Copy the application code from the subfolder
-#COPY src/data/air_data.duckdb /app/
 COPY src/app/app_ploomber.py /app/
-COPY src/app/arima_model.pkl /app/
-
-
-# Extract data for app
-## RUN poetry run ploomber build
+COPY src/notebooks/ML/arima_model.pkl /app/
 
 # Expose the port that the app runs on
 EXPOSE 5000
 
 # Execute the script when the container starts
-#CMD ["poetry", "run", "uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8000"]
 CMD ["streamlit", "run", "app_ploomber.py", "--server.port=80", "--server.address=0.0.0.0"]
