@@ -20,6 +20,8 @@ Key Features of ARIMA:
 
 - **Moving Average (MA):** Models the error term as a linear combination of error terms at various times in the past.
 
+Watch a [video](https://www.youtube.com/watch?v=HEBAE54njH4) explaining our project!
+
 ## Data sources
 
 **OpenAQ** - API designed for aggregating and sharing open air quality data from around the world.
