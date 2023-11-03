@@ -143,8 +143,11 @@ def load_into_motherduck(df, md_token):
     # Load the MotherDuck module.
     motherduck_con.execute("LOAD motherduck")
     
-    # Uploads pandas datafarme into  MotherDuck database.
-    motherduck_con.execute("CREATE OR REPLACE TABLE openaq_api.main.df as SELECT * FROM 'df'")
+   # Truncate the existing table
+    motherduck_con.execute("TRUNCATE openaq_api.main.df")
+
+    # Insert data from DataFrame into the table
+    motherduck_con.execute("INSERT INTO openaq_api.main.df SELECT * FROM 'df'")
     
     # Close connection after dataframe is uploaded
     motherduck_con.close()
