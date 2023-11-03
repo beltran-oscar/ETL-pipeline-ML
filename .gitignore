@@ -170,6 +170,7 @@ cython_debug/
 *.metadata
 *.json
 *.sqlite
+*.docx
 # Ignore everything in the products directory
 src/products/*
 
