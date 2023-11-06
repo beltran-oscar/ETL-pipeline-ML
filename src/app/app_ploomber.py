@@ -19,7 +19,7 @@ md_token = os.getenv('MOTHERDUCK_TOKEN')
 motherduck_con = duckdb.connect(f'md:?motherduck_token={md_token}')
 
 # Query database and output into pandas dataframe
-df = motherduck_con.sql("SELECT * FROM openaq_api.main.df").df()
+df = motherduck_con.sql("SELECT * FROM openaq_api.df").df()
 df.head()
 
 # Create a Streamlit app title
@@ -39,8 +39,8 @@ if selected_tab == "Make Predictions":
         model = pickle.load(file)
     
     # Add user input for forecast date
-    forecast_date = st.date_input("Select Forecast Date", datetime.date(2023, 10, 21))
-        
+    forecast_date = st.date_input("Select Forecast Date", datetime.date.today())
+
     # Convert 'date.local' to object if needed
     df['date.local'] = df['date.local'].astype(str)
         
